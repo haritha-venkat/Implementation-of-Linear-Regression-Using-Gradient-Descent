@@ -37,58 +37,46 @@ RegisterNumber:  212222230046
 
 
 ```python
+import numpy as np
 import pandas as pd
-df=pd.read_csv("Placement_Data.csv")
-df.head()
+from sklearn.preprocessing import StandardScaler
+def linear_regression(X1,y,learning_rate=0.1,num_iters=1000):
+    X=np.c_[np.ones(len(X1)),X1]
+    theta=np.zeros(X.shape[1]).reshape(-1,1)
 
-df1=df.copy()
-df1=df1.drop(["sl_no","salary"],axis=1)
-df1.head()
+    for _ in range(num_iters):
+    #calculate predictions
+        predictions=(X).dot(theta).reshape(-1,1)
+    #calculate erros
+        error=(predictions-y).reshape(-1,1)
+    #update thera using gradient descent
+        theta-=learning_rate*(1/len(X1))*X.T.dot(error) 
+    
+    return theta
 
-df1.isnull().sum()
+data=pd.read_csv("/content/50_Startups.csv")
+data.head()
 
-df1.duplicated().sum()
+X=(data.iloc[1:,:-2].values)
+X1=X.astype(float)
 
-from sklearn.preprocessing import LabelEncoder
-le=LabelEncoder()
-df1["gender"]=le.fit_transform(df1["gender"])
-df1["ssc_b"]=le.fit_transform(df1["ssc_b"])
-df1["hsc_b"]=le.fit_transform(df1["hsc_b"])
-df1["hsc_s"]=le.fit_transform(df1["hsc_s"])
-df1["degree_t"]=le.fit_transform(df1["degree_t"])
-df1["workex"]=le.fit_transform(df1["workex"])
-df1["specialisation"]=le.fit_transform(df1["specialisation"])
-df1["status"]=le.fit_transform(df1["status"])
-df1
+scaler=StandardScaler()
+y=(data.iloc[1:,-1].values).reshape(-1,1)
+X1_Scaled=scaler.fit_transform(X1)
+Y1_Scaled=scaler.fit_transform(y)
+print(X)
+print(X1_Scaled)
 
-x=df1.iloc[:,:-1]
-x
+#learn model parameters
+theta=linear_regression(X1_Scaled,Y1_Scaled)
+new_data=np.array([165349.2,136897.8,471784.1]).reshape(-1,1)
+new_Scaled=scaler.fit_transform(new_data)
+prediction=np.dot(np.append(1,new_Scaled),theta)
+prediction=prediction.reshape(-1,1)
+pre=scaler.inverse_transform(prediction)
+print(prediction)
+print(f"Predicted value: {pre}")
 
-y=df1["status"]
-y
-
-from sklearn.model_selection import train_test_split
-x_train,x_test,y_train,y_test=train_test_split(x,y,test_size=0.2,random_state=0)
-
-from sklearn.linear_model import LogisticRegression
-lr = LogisticRegression(solver = "liblinear")
-lr.fit(x_train,y_train)
-y_pred = Ir. predict(x_test)
-y_pred
-
-from sklearn.metrics import accuracy_score
-accuracy = accuracy_score(y_test,y_pred)
-accuracy
-
-from sklearn.metrics import confusion_matrix
-confusion = (y_test,y_pred)
-confusion
-
-from sklearn.metrics import classification_report
-classification_report1=classification_report(y_test,y_pred)
-print(classification_report1)
-
-Ir.predict([[1,80,1,90,1,1,90,1,0,85,1,85]])
 ```
 
 
